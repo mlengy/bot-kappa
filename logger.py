@@ -27,6 +27,10 @@ class Logger:
         Logger.__log(Logger.Level.ERROR, tagged_object, message)
 
     @staticmethod
+    def divider():
+        print("==================================================")
+
+    @staticmethod
     def __log(level, tagged_object: tagged.Tagged, message):
         lines = message.splitlines()
 

@@ -11,7 +11,8 @@ class Base(commands.Cog, tagged.Tagged):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        Logger.i(self, 'bot ready as {0.user}'.format(self.bot))
+        Logger.i(self, "bot ready as {0.user}".format(self.bot))
+        Logger.divider()
 
     async def cog_command_error(self, ctx, error):
         Logger.e(self, f"{error}")

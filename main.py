@@ -1,20 +1,22 @@
 from dotenv import dotenv_values
-import discord
+from discord.ext import commands
+
+PREFIX = '`'
+bot = commands.Bot(command_prefix=PREFIX)
 
 
-class BotKappa(discord.Client):
-    async def on_ready(self):
-        print('on_ready as {0}'.format(self.user))
+@bot.event
+async def on_ready():
+    print('on_ready as {0.user}'.format(bot))
 
-    async def on_message(self, message):
-        if message.author == client.user:
-            return
 
-        if message.content.startswith('`hi'):
-            await message.channel.send('uwu')
+@bot.command(
+    help="uwu?",
+    brief="uwu?"
+)
+async def hi(ctx):
+    await ctx.channel.send("uwu")
 
 
 token = dotenv_values(".env.token")["TOKEN"]
-
-client = BotKappa()
-client.run(token)
+bot.run(token)

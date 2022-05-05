@@ -8,13 +8,18 @@ from base import Base
 
 
 COG_TYPE_ESSENTIALS = "essentials"
+COG_TYPE_FUN = "fun"
 
 ENABLED_COG_TYPES = {
-    COG_TYPE_ESSENTIALS
+    COG_TYPE_ESSENTIALS,
+    COG_TYPE_FUN
 }
 COGS = {
     COG_TYPE_ESSENTIALS: [
         "utilities"
+    ],
+    COG_TYPE_FUN: [
+        "spongebot"
     ]
 }
 

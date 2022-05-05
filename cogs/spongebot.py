@@ -97,16 +97,16 @@ class Spongebot(commands.Cog, tagged.Tagged):
         for char in clean_text:
             modified_char = char
 
-            # this random number determines if what case we use and what modification behavior is applied
+            # this random number determines what case we use and what modification behavior is applied
             determiner = random.randrange(random_range)
 
             # use each case around half the time
             if determiner % 2 == 0:
                 modified_char = modified_char.lower().swapcase()
 
-            # start modification of characters if
+            # start modification of characters if all the following are true
             #     - we are not waiting for a gap or currently modifying
-            #     - the next character is whitespace
+            #     - the next character is not whitespace
             #     - our random determiner allows us to modify the characters
             if modifier_status == Spongebot.ModifierStatus.NO_MODIFIER and not char.isspace() and determiner < len(MODIFIER_STRINGS):
                 # switch status to currently modifying
@@ -117,9 +117,9 @@ class Spongebot(commands.Cog, tagged.Tagged):
                 modified_char = f"{str(previous_modifier)}{modified_char}"
             # if we are currently modifying
             elif modifier_status == Spongebot.ModifierStatus.YES_MODIFIER:
-                # finish modification of characters if
+                # finish modification of characters if any of the following are true
                 #     - the next character is whitespace
-                #     - our random determiner is different does not allow us to modify the characters
+                #     - our random determiner does not allow us to modify the characters
                 #     - our determiner modifier type is different from our current modifier type
                 if char.isspace() or determiner > len(MODIFIER_STRINGS) - 1 or previous_modifier != Spongebot.Modifier(determiner):
                     # switch status to skip next character for modification
@@ -138,7 +138,7 @@ class Spongebot(commands.Cog, tagged.Tagged):
 
             modified_text += modified_char
 
-        # if modification hasn't finished but the string is over
+        # if modification has not finished but the string is over
         if modifier_status == Spongebot.ModifierStatus.YES_MODIFIER:
             # cap off the modification
             modified_text += str(previous_modifier)

@@ -1,13 +1,11 @@
 from dotenv import dotenv_values
 from discord.ext import commands
 
+import constants
 import tagged
 from logger import Logger
 from base import Base
 
-PREFIX = '`'
-ENV_TOKEN = ".env.token"
-TOKEN_KEY = "token"
 
 COG_TYPE_ESSENTIALS = "essentials"
 
@@ -33,6 +31,7 @@ class Main(tagged.Tagged):
             if cog_type in ENABLED_COG_TYPES:
                 Logger.i(main, f"loading cogs in {cog_type}")
                 for cog in COGS[cog_type]:
+                    Logger.i(main, f"    loading cog {cog}")
                     bot.load_extension(f"cogs.{cog}")
             else:
                 Logger.i(main, f"skipping cogs in {cog_type}")
@@ -41,12 +40,12 @@ class Main(tagged.Tagged):
     @staticmethod
     def main():
         if __name__ == "__main__":
-            bot = commands.Bot(command_prefix=PREFIX)
+            bot = commands.Bot(command_prefix=constants.PREFIX)
 
             bot.add_cog(Base(bot))
             Main.setup_cogs(bot)
 
-            token = dotenv_values(ENV_TOKEN)[TOKEN_KEY]
+            token = dotenv_values(constants.ENV_TOKEN)[constants.TOKEN_KEY]
             bot.run(token)
 
 

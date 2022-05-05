@@ -47,10 +47,7 @@ class Spongebot(commands.Cog, tagged.Tagged):
 
         await message.delete()
         await webhook.send(modified_text, username=member_name, avatar_url=member_pfp_url)
-
-        webhooks = await ctx.channel.webhooks()
-        for webhook in webhooks:
-            await webhook.delete()
+        await webhook.delete()
 
     @commands.Cog.listener()
     async def on_message(self, message):

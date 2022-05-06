@@ -51,12 +51,6 @@ class Spongebot(commands.Cog, tagged.Tagged):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if self.message_counter < self.message_limit:
-            self.message_counter += 1
-            return
-        else:
-            self.message_counter = 0
-            self.__compute_new_message_limit()
 
         if message.author == self.bot.user:
             return
@@ -65,6 +59,13 @@ class Spongebot(commands.Cog, tagged.Tagged):
 
         if text.startswith(constants.PREFIX):
             return
+        
+        if self.message_counter < self.message_limit:
+            self.message_counter += 1
+            return
+        else:
+            self.message_counter = 0
+            self.__compute_new_message_limit()
 
         modified_text = Spongebot.__spongebob_mock(self, text)
 

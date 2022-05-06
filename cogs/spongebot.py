@@ -7,7 +7,6 @@ import constants
 import tagged
 from logger import Logger
 
-
 AUTO_ENABLED = True
 # amount of messages needed before next spongebot is between
 # AUTO_MESSAGE_OFFSET and AUTO_MESSAGE_OFFSET + AUTO_MESSAGE_RANGE inclusive on both sides
@@ -59,7 +58,7 @@ class Spongebot(commands.Cog, tagged.Tagged):
 
         if text.startswith(constants.PREFIX):
             return
-        
+
         if self.message_counter < self.message_limit:
             self.message_counter += 1
             return
@@ -109,7 +108,8 @@ class Spongebot(commands.Cog, tagged.Tagged):
             #     - we are not waiting for a gap or currently modifying
             #     - the next character is not whitespace
             #     - our random determiner allows us to modify the characters
-            if modifier_status == Spongebot.ModifierStatus.NO_MODIFIER and not char.isspace() and determiner < len(MODIFIER_STRINGS):
+            if modifier_status == Spongebot.ModifierStatus.NO_MODIFIER and not char.isspace() and determiner < len(
+                    MODIFIER_STRINGS):
                 # switch status to currently modifying
                 modifier_status = Spongebot.ModifierStatus.YES_MODIFIER
                 # store current modifier type
@@ -122,7 +122,8 @@ class Spongebot(commands.Cog, tagged.Tagged):
                 #     - the next character is whitespace
                 #     - our random determiner does not allow us to modify the characters
                 #     - our determiner modifier type is different from our current modifier type
-                if char.isspace() or determiner > len(MODIFIER_STRINGS) - 1 or previous_modifier != Spongebot.Modifier(determiner):
+                if char.isspace() or determiner > len(MODIFIER_STRINGS) - 1 or previous_modifier != Spongebot.Modifier(
+                        determiner):
                     # switch status to skip next character for modification
                     modifier_status = Spongebot.ModifierStatus.GAP_MODIFIER
                     # cap off modification and append next character

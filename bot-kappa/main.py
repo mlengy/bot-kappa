@@ -1,4 +1,3 @@
-import asyncio
 import discord
 from dotenv import dotenv_values
 from discord.ext import commands

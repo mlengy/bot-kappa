@@ -60,6 +60,9 @@ class Main(tagged.Tagged):
     @staticmethod
     def main():
         if __name__ == "__main__":
+            if not constants.PATH_TO_KAPPA:
+                raise Exception("Kappa path is missing!")
+
             token = dotenv_values(constants.ENV_TOKEN)[constants.TOKEN_KEY]
             bot.run(token)
 

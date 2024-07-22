@@ -12,20 +12,20 @@ class Expose(commands.Cog, tagged.Tagged):
         self.TAG = type(self).__name__
         self.expose_mode_include = True
 
-        expose_admin_strings = dotenv_values(constants.CONFIG_FILE)[constants.EXPOSE_ADMINS_KEY].split("\n")
+        expose_admin_strings = dotenv_values(constants.CONFIG_FILE)[constants.EXPOSE_ADMINS_KEY].split('\n')
         for admin in expose_admin_strings:
             Logger.v(self, f"Admin: {admin}")
         self.expose_admins = {
-            int(userId) for userId in expose_admin_strings
+            int(admin[0]): admin[1] for admin in (admin.split(":") for admin in expose_admin_strings)
         }
-        self.expose_subadmins = set()
-        expose_exclude_strings = dotenv_values(constants.CONFIG_FILE)[constants.EXPOSE_EXCLUDE_KEY].split("\n")
+        self.expose_subadmins = {}
+        expose_exclude_strings = dotenv_values(constants.CONFIG_FILE)[constants.EXPOSE_EXCLUDE_KEY].split('\n')
         for exclude in expose_exclude_strings:
             Logger.v(self, f"Exclude: {exclude}")
         self.expose_exclude = {
-            int(userId) for userId in expose_exclude_strings
+            int(admin[0]): admin[1] for admin in (admin.split(":") for admin in expose_exclude_strings)
         }
-        self.expose_include = set()
+        self.expose_include = {}
 
     @commands.command(
         help="replies with current expose mode",
@@ -49,6 +49,13 @@ class Expose(commands.Cog, tagged.Tagged):
         await ctx.channel.send(f"New expose mode: {mode}")
 
     @commands.command(
+        help="shows expose admins",
+        brief="shows expose admins"
+    )
+    async def expose_admin(self, ctx):
+        await self.print_group("Expose admins:", self.expose_admins | self.expose_subadmins, ctx)
+
+    @commands.command(
         help="add an expose admin",
         brief="add an expose admin"
     )
@@ -63,6 +70,13 @@ class Expose(commands.Cog, tagged.Tagged):
         await self.remove_from_group(self.expose_subadmins, ctx)
 
     @commands.command(
+        help="shows expose excludes",
+        brief="shows expose excludes"
+    )
+    async def expose_exclude(self, ctx):
+        await self.print_group("Expose excludes:", self.expose_exclude, ctx)
+
+    @commands.command(
         help="add someone to the exclude list",
         brief="add someone to the exclude list"
     )
@@ -75,6 +89,13 @@ class Expose(commands.Cog, tagged.Tagged):
     )
     async def expose_remove_exclude(self, ctx):
         await self.remove_from_group(self.expose_exclude, ctx)
+
+    @commands.command(
+        help="shows expose includes",
+        brief="shows expose includes"
+    )
+    async def expose_include(self, ctx):
+        await self.print_group("Expose includes:", self.expose_include, ctx)
 
     @commands.command(
         help="add someone to the include list",
@@ -96,12 +117,12 @@ class Expose(commands.Cog, tagged.Tagged):
 
         added = False
 
-        mentioned = ctx.message.mentions[0].id
-        if mentioned is not None and mentioned not in group:
-            group.add(mentioned)
+        mentioned_id = ctx.message.mentions[0].id
+        mentioned_name = ctx.message.mentions[0].display_name
+        if mentioned_id is not None and mentioned_id not in group:
+            group[mentioned_id] = mentioned_name if mentioned_name else "Unknown"
             added = True
 
-        mentioned_name = ctx.message.mentions[0].display_name
         if added:
             if mentioned_name is None:
                 await ctx.channel.send("Added!")
@@ -114,9 +135,9 @@ class Expose(commands.Cog, tagged.Tagged):
 
         removed = False
 
-        mentioned = ctx.message.mentions[0].id
-        if mentioned is not None and mentioned in group:
-            group.remove(mentioned)
+        mentioned_id = ctx.message.mentions[0].id
+        if mentioned_id is not None and mentioned_id in group:
+            del group[mentioned_id]
             removed = True
 
         mentioned_name = ctx.message.mentions[0].display_name
@@ -125,6 +146,14 @@ class Expose(commands.Cog, tagged.Tagged):
                 await ctx.channel.send("Removed!")
             else:
                 await ctx.channel.send(f"Removed {mentioned_name}!")
+
+    async def print_group(self, name, group, ctx):
+        if await self.admin_guard(ctx):
+            return
+
+        group_string = '\n'.join(['`%s`: %s' % (key, value) for (key, value) in group.items()])
+
+        await ctx.channel.send(f"{name}\n{group_string}")
 
     async def admin_guard(self, ctx):
         is_admin = ctx.author.id in self.expose_admins

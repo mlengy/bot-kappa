@@ -1,2 +1,2 @@
 #!/bin/sh
-python3 bot-kappa/main.py &> /dev/null &
+/usr/bin/python3 /home/ubuntu/bot-kappa/bot-kappa/main.py &> /dev/null &

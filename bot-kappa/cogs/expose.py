@@ -188,10 +188,15 @@ class Expose(commands.Cog, tagged.Tagged):
         member_name = message.author.display_name
         member_pfp_url = message.author.display_avatar.url
 
-        webhook = await message.channel.create_webhook(name=member_name)
+        try:
+            webhook = await message.channel.create_webhook(name=member_name)
 
-        await webhook.send(message.content, username=member_name, avatar_url=member_pfp_url)
-        await webhook.delete()
+            await webhook.send(message.content, username=member_name, avatar_url=member_pfp_url)
+            await webhook.delete()
+        except Exception as e:
+            Logger.e(self, f"Failed to create webhook: {e}")
+
+            message.channel.send(f"{member_name} deleted: {message.content}")
 
     @commands.Cog.listener()
     async def on_message_edit(self, before, after):
@@ -205,10 +210,15 @@ class Expose(commands.Cog, tagged.Tagged):
         member_name = before.author.display_name
         member_pfp_url = before.author.display_avatar.url
 
-        webhook = await before.channel.create_webhook(name=member_name)
+        try:
+            webhook = await before.channel.create_webhook(name=member_name)
 
-        await webhook.send(before.content, username=member_name, avatar_url=member_pfp_url)
-        await webhook.delete()
+            await webhook.send(before.content, username=member_name, avatar_url=member_pfp_url)
+            await webhook.delete()
+        except Exception as e:
+            Logger.e(self, f"Failed to create webhook: {e}")
+
+            after.channel.send(f"{member_name} edited: {before.content}")
 
 
 async def setup(bot):
